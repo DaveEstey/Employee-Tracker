@@ -37,14 +37,18 @@ const makeMenu = () => {
         case "View all employees":
           viewEmployees();
           break;
-        /* case "Add a department":
-          addDeparnments();
+        case "Add a department":
+          addDepartments();
+          break;
         case "Add a role":
           addRole();
+          break;
         case "add an employee":
           addEmployee();
+          break;
         case "Update an employee":
-          updateEmployee(); */
+          updateEmployee();
+          break;
       }
     });
 }
@@ -65,7 +69,7 @@ const viewDepartments = () => {
 }
 
 const viewRoles = () => {
-  const getRoles = `SELECT role.title AS Title, department.name AS Department, role.salary AS Salary
+  const getRoles = `SELECT role.title AS Title, department.name AS Department, department.id AS ID, role.salary AS Salary
         FROM role
         LEFT JOIN department
           ON role.department_id = department.id`;
@@ -79,7 +83,7 @@ const viewRoles = () => {
 }
 
 const viewEmployees = () => {
-  const getEmployees = `SELECT employee.first_name, employee.last_name, role.title AS Title, department.name AS Department
+  const getEmployees = `SELECT employee.id AS ID, employee.first_name, employee.last_name, role.title AS Title, department.name AS Department, role.salary AS Salary, employee.manager_id AS Manager
         FROM employee
         LEFT JOIN role
            ON  employee.role_id = role.id
@@ -94,4 +98,26 @@ const viewEmployees = () => {
     }
   })
 }
+
+const addDepartments = () => {
+  inquirer
+    .prompt(
+      {
+        type: "input",
+        name: "depName",
+        message: "What is the Department name?"
+      },
+    )
+    .then(data => {
+      const addDepartment = `INSERT INTO department (name) VALUES ('${data.depName}');`
+      
+      db.query(addDepartment, (err, data) => {
+        if (err) throw err;
+        else {
+          console.log("Successfully added Department!")
+          makeMenu();
+        };
+      });
+    });
+  }
 
