@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 const sql = require("mysql2");
 const table = require("console.table");
 
+
 const db = sql.createConnection(
   {
     host: 'localhost',
@@ -10,7 +11,6 @@ const db = sql.createConnection(
     database: 'business_db'
   }
 )
-
 
 
 
@@ -38,7 +38,7 @@ const makeMenu = () => {
           viewEmployees();
           break;
         case "Add a department":
-          addDepartments();
+          addDepartment();
           break;
         case "Add a role":
           addRole();
@@ -53,10 +53,6 @@ const makeMenu = () => {
     });
 }
 
-
-makeMenu();
-
-
 const viewDepartments = () => {
   const getDepartments = `SELECT * FROM department`;
   db.query(getDepartments, (err, data) => {
@@ -67,6 +63,19 @@ const viewDepartments = () => {
     }
   });
 }
+
+const saveDepartments = () => {
+  const getDepartments = `SELECT * FROM department`;
+  db.query(getDepartments, (err, data) => {
+    if (err) throw err
+    else {
+      departmentArr = data;
+      makeMenu();
+    }
+  });
+}
+
+saveDepartments();
 
 const viewRoles = () => {
   const getRoles = `SELECT role.title AS Title, department.name AS Department, department.id AS ID, role.salary AS Salary
@@ -99,19 +108,19 @@ const viewEmployees = () => {
   })
 }
 
-const addDepartments = () => {
+const addDepartment = () => {
   inquirer
     .prompt(
       {
         type: "input",
         name: "depName",
-        message: "What is the Department name?"
+        message: "What is the department name?"
       },
     )
     .then(data => {
       const addDepartment = `INSERT INTO department (name) VALUES ('${data.depName}');`
-      
-      db.query(addDepartment, (err, data) => {
+
+      db.query(addDepartment, (err) => {
         if (err) throw err;
         else {
           console.log("Successfully added Department!")
@@ -119,5 +128,63 @@ const addDepartments = () => {
         };
       });
     });
-  }
+}
+
+const addRole = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "roleName",
+        message: "What is the role's name?"
+      },
+      {
+        type: "input",
+        name: "roleSalary",
+        message: "What is the role's salary?"
+      },
+      {
+        type: "list",
+        name: "roleDepartment",
+        message: "What is the role's department?",
+        choices: departmentArr
+      },
+
+    ])
+    .then(data => {
+      const departmentCompare = departmentArr.filter(department => department.name === data.roleDepartment);
+      const answers = `INSERT INTO role (title, salary, department_id) VALUES ("${data.roleName}", "${data.roleSalary}", "${departmentCompare[0].id}"); `
+      db.query(answers, (err) => {
+        if (err)
+          throw err;
+        else {
+          console.log("Successfully added Role!");
+          makeMenu();
+        };
+      });
+    });
+
+}
+
+const addEmployee = () => {
+  inquirer
+    .prompt(
+      {
+        type: "input",
+        name: "empFirstName",
+        message: "What is the employee's first name?"
+      },
+    )
+    .then(data => {
+      const addDepartment = `INSERT INTO department (name) VALUES ('${data.depName}');`
+
+      db.query(addDepartment, (err) => {
+        if (err) throw err;
+        else {
+          console.log("Successfully added Employee!")
+          makeMenu();
+        };
+      });
+    });
+}
 

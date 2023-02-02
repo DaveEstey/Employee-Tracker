@@ -12,6 +12,6 @@ VALUES ("LEAD", 65000, 1),
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("JOHN", "DOE", 1, null),
-    ("JANE", "SMITH", 1, 1),
-    ("TOM", "LONG", 1, 1),
-    ("MAX", "BIGG", 1, null);
+    ("JANE", "SMITH", 3, 1),
+    ("TOM", "LONG", 2, 1),
+    ("MAX", "BIGG", 4 null);
