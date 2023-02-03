@@ -15,6 +15,7 @@ const db = sql.createConnection(
 var departmentsArr = [];
 var employeesArr = [];
 var rolesArr = [];
+var rArr = []
 
 const makeMenu = () => {
 
@@ -81,10 +82,9 @@ const saveRoles = () => {
     if (err) throw err
     else {
       rolesArr = data;
-      const rArr = rolesArr.map(array => {
+       rArr = rolesArr.map(array => {
         return array.title;
       });
-      console.log(rArr)
     }
   });
 }
@@ -207,7 +207,7 @@ const addEmployee = () => {
         type: "list",
         name: "empRole",
         message: "What is the employee's role?",
-        choices: rolesArr //can't seem to get the rolesArr to function like the departmentsArr 
+        choices: rArr 
       },
       {
         type: "input",
