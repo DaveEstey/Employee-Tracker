@@ -147,6 +147,7 @@ const addDepartment = () => {
       db.query(addDepartment, (err) => {
         if (err) throw err;
         else {
+          saveDepartments();
           console.log("Successfully added Department!")
           makeMenu();
         };
@@ -171,17 +172,18 @@ const addRole = () => {
         type: "list",
         name: "roleDepartment",
         message: "What is the role's department?",
-        choices: departmentArr
+        choices: departmentsArr
       },
 
     ])
     .then(data => {
-      const departmentCompare = departmentArr.filter(department => department.name === data.roleDepartment);
+      const departmentCompare = departmentsArr.filter(department => department.name === data.roleDepartment);
       const answers = `INSERT INTO role (title, salary, department_id) VALUES ("${data.roleName}", "${data.roleSalary}", "${departmentCompare[0].id}"); `
       db.query(answers, (err) => {
         if (err)
           throw err;
         else {
+          saveRoles();
           console.log("Successfully added Role!");
           makeMenu();
         };
@@ -223,6 +225,7 @@ const addEmployee = () => {
       db.query(addEmp, (err) => {
         if (err) throw err;
         else {
+          saveEmployees();
           console.log("Successfully added Employee!")
           makeMenu();
         };
