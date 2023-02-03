@@ -12,11 +12,12 @@ const db = sql.createConnection(
   }
 )
 
-
-
-
+var departmentsArr = [];
+var employeesArr = [];
+var rolesArr = [];
 
 const makeMenu = () => {
+
   inquirer
     .prompt(
       {
@@ -43,10 +44,10 @@ const makeMenu = () => {
         case "Add a role":
           addRole();
           break;
-        case "add an employee":
+        case "Add an employee":
           addEmployee();
           break;
-        case "Update an employee":
+        case "Update an employee role":
           updateEmployee();
           break;
       }
@@ -69,13 +70,36 @@ const saveDepartments = () => {
   db.query(getDepartments, (err, data) => {
     if (err) throw err
     else {
-      departmentArr = data;
-      makeMenu();
+      departmentsArr = data;
     }
   });
 }
 
-saveDepartments();
+const saveRoles = () => {
+  const roles = `SELECT role.title, role.id AS id FROM role`;
+  db.query(roles, (err, data) => {
+    if (err) throw err
+    else {
+      rolesArr = data;
+      const rArr = rolesArr.map(array => {
+        return array.title;
+      });
+      console.log(rArr)
+    }
+  });
+}
+
+const saveEmployees = () => {
+  const employees = `SELECT * FROM employee`;
+  db.query(employees, (err, data) => {
+    if (err) throw err
+    else {
+      employeesArr = data;
+    }
+  });
+}
+
+
 
 const viewRoles = () => {
   const getRoles = `SELECT role.title AS Title, department.name AS Department, department.id AS ID, role.salary AS Salary
@@ -118,7 +142,7 @@ const addDepartment = () => {
       },
     )
     .then(data => {
-      const addDepartment = `INSERT INTO department (name) VALUES ('${data.depName}');`
+      const addDepartment = `INSERT INTO department (name) VALUES ("${data.depName}");`
 
       db.query(addDepartment, (err) => {
         if (err) throw err;
@@ -168,17 +192,35 @@ const addRole = () => {
 
 const addEmployee = () => {
   inquirer
-    .prompt(
+    .prompt([
       {
         type: "input",
         name: "empFirstName",
         message: "What is the employee's first name?"
       },
-    )
+      {
+        type: "input",
+        name: "empLastName",
+        message: "What is the employee's last name?"
+      },
+      {
+        type: "list",
+        name: "empRole",
+        message: "What is the employee's role?",
+        choices: rolesArr //can't seem to get the rolesArr to function like the departmentsArr 
+      },
+      {
+        type: "input",
+        name: "empManager",
+        message: "What is the employee's manager's name?"
+      },
+    ])
     .then(data => {
-      const addDepartment = `INSERT INTO department (name) VALUES ('${data.depName}');`
+      const roleCompare = rolesArr.filter(role => role.title === data.empRole);
+      //Error because the array is being populated wrong
+      const addEmp = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${data.empFirstName}", "${data.empLastName}", ${roleCompare[0].id}, null);`
 
-      db.query(addDepartment, (err) => {
+      db.query(addEmp, (err) => {
         if (err) throw err;
         else {
           console.log("Successfully added Employee!")
@@ -187,4 +229,7 @@ const addEmployee = () => {
       });
     });
 }
-
+saveRoles();
+saveDepartments();
+saveEmployees();
+makeMenu();
