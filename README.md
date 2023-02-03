@@ -37,6 +37,7 @@ No test available.
 ## Video Demonstration
 
 https://drive.google.com/file/d/13_5OQpcYeNbdNSsPnp05aqUrYXUIXC2J/view **Updated each add function to also include the update from previously used add function.**
+(Not shown in video).
 
 ## Questions
   
